@@ -1,5 +1,11 @@
+"""
+Main entry point for the DuckDuckGo Telegram Search Bot.
+Initializes the bot, registers handlers, and starts polling.
+"""
+
 import logging
 import os
+import sys
 from typing import Optional, List, Dict, Any
 
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
@@ -19,8 +25,14 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
-# Bot configuration
-BOT_TOKEN = os.environ.get("BOT_TOKEN", "YOUR_BOT_TOKEN_HERE")
+# Bot configuration - EXIT if token not set
+BOT_TOKEN = os.environ.get("BOT_TOKEN")
+if not BOT_TOKEN:
+    logger.error("BOT_TOKEN environment variable not set!")
+    print("Error: BOT_TOKEN environment variable not set!", file=sys.stderr)
+    print("Please add BOT_TOKEN to Replit Secrets.", file=sys.stderr)
+    sys.exit(1)
+
 MAX_RESULTS = 5  # Maximum number of results per search
 
 # Search types
@@ -242,10 +254,11 @@ async def handle_callback_query(update: Update, context: ContextTypes.DEFAULT_TY
     if data == "none":
         return
 
-    search_type, search_query = data.split(":", 1)
-
-    # Perform the new search
-    await perform_search(update, context, search_query, search_type)
+    try:
+        search_type, search_query = data.split(":", 1)
+        await perform_search(update, context, search_query, search_type)
+    except ValueError:
+        logger.error(f"Invalid callback data: {data}")
 
 
 async def search_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
