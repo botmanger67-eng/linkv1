@@ -102,7 +102,9 @@ def search_instant_answer(query: str) -> Optional[Dict[str, Any]]:
 
     Returns:
         A dictionary containing the instant answer if found, or None if no answer is available.
-        The dictionary contains keys: 'abstract', 'abstractText', 'abstractSource', 'image', 'heading', 'answer', 'answerType', 'definition', 'definitionSource', 'definitionURL', 'entity', 'infobox', 'results', 'type', 'url'.
+        The dictionary contains keys: 'abstract', 'abstractText', 'abstractSource', 'image', 
+        'heading', 'answer', 'answerType', 'definition', 'definitionSource', 'definitionURL', 
+        'entity', 'infobox', 'results', 'type', 'url'.
 
     Raises:
         DuckDuckGoSearchError: If the search fails.
@@ -171,4 +173,4 @@ def search_all(query: str, max_results: int = 5) -> Dict[str, Any]:
         return results
     except DuckDuckGoSearchError as e:
         logger.error(f"Combined search failed for '{query}': {e}")
-        raise
+        raise DuckDuckGoSearchError(f"Combined search failed: {e}")
